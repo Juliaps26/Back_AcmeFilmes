@@ -108,7 +108,7 @@ const selectFilmes = async function (id) {
 const selectByNomeDoAtor = async function (nome) {
     try {
         // Script do bd
-        let sql = `select * from tbl_ator where nome like "%${nome}"`
+        let sql = `select * from tbl_ator where nome like "%${nome}%"`
         let rsAtores = await prisma.$queryRawUnsafe(sql)
 
         return rsAtores
@@ -124,7 +124,7 @@ const deleteAtor = async function (id) {
         // Comando no BD
         let sql = `delete from tbl_nacionalidade_ator where id_ator=${id}`
         let rsTabela = await prisma.$executeRawUnsafe(sql)
-        if (rsTabela) {
+        if (rsTabela == 0) {
             sql = `delete from tbl_ator where id=${id}`
             let rsAtor = await prisma.$executeRawUnsafe(sql)
             return rsAtor

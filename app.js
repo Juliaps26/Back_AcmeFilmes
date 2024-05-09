@@ -334,6 +334,24 @@ app.post('/v2/acmefilmes/diretor/insert',cors(), bodyParserJSON, async function(
     response.json(resultDadosNovoDiretor)
 })
 
+// Excluir diretor 
+app.delete('/v2/acmefilmes/diretores/delete/:id', cors(), async function(request, response){
+    let idDoDiretor = request.params.id
+    let diretorExcluido = await controllerDiretores.setExcluirDiretor(idDoDiretor)
+    response.status(diretorExcluido.status_code)
+    response.json(diretorExcluido)
+})
+
+// Atualizar diretor 
+app.put('/v2/acmefilmes/atualizar/diretor/:id', cors(), bodyParserJSON, async function(request, response){
+    let idDiretor = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let diretorAtualizado = await controllerDiretores.setAtualizarDiretor(idDiretor, dadosBody, contentType)
+    response.status(diretorAtualizado.status_code)
+    response.json(diretorAtualizado)
+})
+
 
 
 // Executa a API e faz ela ficar aguardando requisições

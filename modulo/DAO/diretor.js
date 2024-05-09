@@ -153,14 +153,101 @@ const insertDiretor=async function(dadosDiretor){
     }
 }
 
-// Atualizar
+
 // Excluir 
+const deleteDiretor = async function(id){
+    try {
+        let sql = `delete from tbl_nacionalidade_diretor where id_diretor=${id}`
+        
+        let rsTabela = await prisma.$executeRawUnsafe(sql)
+        if(rsTabela == 0){
+            sql = `delete from tbl_diretor where id=${id}`
+            let rsDiretor = await prisma.$executeRawUnsafe(sql)
+            console.log(rsDiretor);
+            return rsDiretor
+        }else{
+            return false
+        }
+    } catch (error) {
+        return false
+    }
+}
+
+// Atualizar
+const updateDiretor = async function(id, dadosDiretor){
+    try {
+        let sql
+        // Se a data de falecimento estiver vazia, null 
+        if (dadosDiretor.data_falecimento != '' &&
+            dadosDiretor.data_falecimento != null &&
+            dadosDiretor.data_falecimento != undefined) {
+
+
+            sql = `
+            update tbl_diretor 
+            set 
+                nome='${dadosDiretor.nome}',
+                data_nascimento='${dadosDiretor.data_nascimento}',
+                data_falecimento='${dadosDiretor.data_falecimento}',
+                foto='${dadosDiretor.foto}',
+                biografia='${dadosDiretor.biografia}',
+                id_sexo=${dadosDiretor.id_sexo}
+
+            where id='${id}';
+        `
+        }
+        else {
+            // Script sql
+            sql = `
+            update tbl_diretor
+            set 
+                nome='${dadosDiretor.nome}',
+                data_nascimento='${dadosDiretor.data_nascimento}',
+                foto='${dadosDiretor.foto}',
+                biografia='${dadosDiretor.biografia}',
+                id_sexo=${dadosDiretor.id_sexo}
+
+            where id='${id}';
+        `
+        }
+        let atualizacao = await prisma.$executeRawUnsafe(sql)
+        if (atualizacao) {
+            for (let nacionalidade of dadosDiretor.id_nacionalidade) {
+                sql = `
+                
+                    update tbl_nacionalidade_diretor
+                        
+                    set
+                        id_nacionalidade=${nacionalidade},
+                        id_diretor=${id}
+                    
+                    where id_diretor=${id}
+                `
+                let atualizacao = await prisma.$executeRawUnsafe(sql)
+                if (atualizacao)
+                    continue
+                else
+                    return false
+            }
+            return true
+        }
+        else
+            return false
+    } catch (error) {
+
+        return false
+    }
+    
+}
+
 
 module.exports={
    selectAllDiretores,
    selectFilmes,
    selectLastID,
    selectByIdDiretor,
-   insertDiretor
+   insertDiretor,
+   updateDiretor,
+   deleteDiretor
 }
 

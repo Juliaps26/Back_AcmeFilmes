@@ -9,7 +9,7 @@
 // Import
 const message = require('../modulo/config.js')
 const classificacao = require('./controller_classificacao.js')
-
+const classificacaoDAO = require('../modulo/DAO/classificacao.js')
 // Import do arquivo DAO que fará comunicação como Banco de Dados 
 const filmeDAO = require('../modulo/DAO/filme.js');
 
@@ -190,7 +190,6 @@ const setExcluirFilme = async function (id) {
     }
 }
 
-
 // Função para retornar todos os filmes
 const getListarFilmes = async function () {
 // Criando objeto JSON  
@@ -233,6 +232,12 @@ const getBuscarFilme = async function (id) {
             // Validação para verificar a quantidade de itens retornados
             if(dadosFilme.length > 0){
                  // Cria o JSON para retorno
+                 for(let filmes of dadosFilme){
+                    let classifyFilmes = await classificacaoDAO.selectByIdClassificacao(filmes.id)
+                    delete filmes.id
+                    filmes.classificacao = classifyFilmes  
+               
+                }
             filmesJSON.filme = dadosFilme;
             filmesJSON.status_code = 200;
 
@@ -248,6 +253,26 @@ const getBuscarFilme = async function (id) {
     }
 
 }
+
+// const getBuscarFilmePeloNome = async function(nome){
+//     try {
+//         let nomeDoFilme = nome
+//         let filmesJSON = {}
+
+//         if(nomeDoFilme == '' || nomeDoFilme == undefined || !isNaN(nomeDoFilme))
+//         return message.ERROR_INVALID_ID
+//         else{
+//             let dadosFilmes = await filmeDAO.selectByNomeFilme(nomeDoFilme)
+//             if(dadosFilmes.length > 0){
+//                 for(let filme of dadosFilmes){
+//                     filme.classificacao = await 
+//                 }
+//             }
+//         }
+//     } catch (error) {
+        
+//     }
+// }
 
 
 //Exportar

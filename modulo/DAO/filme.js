@@ -234,14 +234,14 @@ const selectByIdFilme = async function (id) {
 
 // Função para buscar um filme filtrando pelo nome
 const selectByNomeFilme = async function(nome){
-  let filmesJSON ={}
-  let dadosFilmes= await filmeDAO.selectByNomeFilme()
-  if(dadosFilmes){
-    filmesJSON.filmes= dadosFilmes
-    return filmesJSON
-  }
-  else
-  return false
+ let nomeDoFilme = nome
+ try {
+    let sql = `select * from tbl_filme where nome like "%${nomeDoFilme}"`
+    let rsFilmes = await prisma.$queryRawUnsafe(sql)
+    return rsFilmes
+ } catch (error) {
+    return false
+ }
 
 
 }
@@ -265,5 +265,6 @@ module.exports = {
     deleteFilme,
     selectAllFilmes,
     selectByIdFilme,
-    retornarID
+    retornarID,
+    selectByNomeFilme
 }

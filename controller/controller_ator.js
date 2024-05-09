@@ -131,9 +131,12 @@ const setExcluirAtor = async function(id){
         return message.ERROR_INVALID_ID
 
         else{
-            let excluir = await atorDAO.deleteAtor(idDoAtor)
-            if(excluir)
-            return message.SUCCESS_DELETE_ITEM
+            let existe = await atorDAO.selectByIdAtor(idDoAtor)
+            if(existe){
+                let excluir = await atorDAO.deleteAtor(idDoAtor)
+                console.log(excluir);
+                    return message.SUCCESS_DELETE_ITEM
+            }
              else{
                 return message.ERROR_NOT_FOUND
              }
@@ -183,6 +186,7 @@ const setAtualizarAtor=async function(id, dadosAtor, contentType){
                 return message.ERROR_REQUIRED_FIELDS
             else{
                 let ator=await atorDAO.selectByIdAtor(idAtor)
+                console.log(ator);
                 if(ator){
                     let atorAtualizadoJSON={}
                     let atorAtualizado=await atorDAO.uptadeAtor(idAtor, dadosAtor)

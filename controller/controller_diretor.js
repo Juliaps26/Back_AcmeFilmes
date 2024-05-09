@@ -123,9 +123,72 @@ const setInserirNovoDiretor=async function(dadosDiretor, contentType){
 }
 
 
+const setExcluirDiretor = async function(id){
+    try {
+        let idDoDiretor = id
+        if(idDoDiretor == '' || idDoDiretor == undefined || isNaN(idDoDiretor))
+        return message.ERROR_INVALID_ID
+
+        else{
+            let existe = await diretorDAO.selectByIdDiretor(idDoDiretor)
+            if(existe){
+                let excluir = await diretorDAO.deleteDiretor(idDoDiretor)
+                console.log(excluir);
+                return message.SUCCESS_DELETE_ITEM
+            }
+            else{
+                return message.ERROR_NOT_FOUND
+            }
+        }
+    } catch (error) {
+
+        return message.ERROR_INTERNAL_SERVER
+    }
+}
+
+
+const setAtualizarDiretor = async function(id, dadosDiretores, contentType){
+    try {
+        if(String(contentType).toLowerCase()=='application/json'){
+            let idDiretor=id
+            if(idDiretor==''||idDiretor ==undefined||isNaN(idDiretor))
+                return message.ERROR_INVALID_ID
+            else if(dadosDiretores.id_nacionalidade==null||dadosDiretores.id_nacionalidade==undefined)
+                return message.ERROR_REQUIRED_FIELDS
+            else{
+                let diretor =await diretorDAO.selectByIdDiretor(idDiretor)
+                if(diretor){
+                    let diretorAtualizadoJSON={}
+                    let diretorAtualizado =await diretorDAO.updateDiretor(idDiretor, dadosDiretores)
+                    if(diretorAtualizado){
+                        diretorAtualizadoJSON.diretor     =   dadosDiretores
+                        diretorAtualizadoJSON.status      =   message.SUCCESS_UPDATE_ITEM.status
+                        diretorAtualizadoJSON.status_code =   message.SUCCESS_UPDATE_ITEM.status_code
+                        diretorAtualizadoJSON.message     =   message.SUCCESS_UPDATE_ITEM.message
+                        return diretorAtualizadoJSON
+                    }
+                    else
+                        return message.ERROR_NOT_FOUND
+                }
+                else 
+                
+                    return message.ERROR_NOT_FOUND
+            }
+        }else{
+            return message.ERROR_CONTENT_TYPE
+        }
+    } catch (error) {
+        console.log(error)
+
+        return message.ERROR_INTERNAL_SERVER
+    }
+}
+
 // Exportando todas as funçoes
 module.exports ={
     getTodosDiretores,
     setInserirNovoDiretor,
-    getBuscarDiretorPeloID
+    getBuscarDiretorPeloID,
+    setExcluirDiretor,
+    setAtualizarDiretor
 }
